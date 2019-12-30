@@ -19,8 +19,8 @@ RUN yaourt --noconfirm -Sua
 
 # System configuration
 USER root
-RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && echo "zh_CN.UTF-8 UTF-8" >> /etc/locale.gen \
-    && locale-gen
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && echo "zh_CN.UTF-8 UTF-8" >> /etc/locale.gen
+RUN locale-gen
 
 # Install some graphical packages
 USER user
@@ -36,6 +36,11 @@ USER root
 RUN cd /etc/skel && git clone $REPO 
 
 USER user
-RUN /etc/skel/docker-dotfiles/commons/user/.bin/install_bootstrap
-RUN /etc/skel/docker-dotfiles/commons/user/.bin/install_commons
+# RUN /etc/skel/walnut-i3/commons/user/.bin/install_bootstrap
+RUN /etc/skel/walnut-i3/commons/user/.bin/install_commons
 
+RUN echo -e '#! /bin/zsh\n \
+exec dbus-launch i3 --shmlog-size=26214400 \n\
+' > /usr/local/bin/lauchsys
+RUN chmod +x /usr/local/bin/lauchsys
+CMD ["/usr/local/bin/lauchsys"]
