@@ -1,0 +1,114 @@
+#!/bin/bash
+
+# Configure user files (for root or home user)
+if [ $(id -u) -eq 0 ]; then
+	ROOTUSER="y"
+	SUDO="sudo"
+	IMGPATH="/etc/skel"
+else
+	ROOTUSER="n"
+	SUDO=""
+	IMGPATH="$HOME"
+	sudo usermod --shell /bin/zsh $USER
+fi
+
+# Overide yaourt CMD (disable not enough disk space in TMPFS)
+mkdir -p $HOME/tmp
+#YAOURT="yaourt --tmp $HOME/tmp"
+YAOURT="yaourt"
+
+# set user shell
+[ $(id -u) -eq 0 ] ||
+	install_needed_packages() {
+		# Install needed packages
+		echo "====================================================================="
+		echo "$INSTALL"
+		echo "====================================================================="
+		set -e
+		$YAOURT --noconfirm --needed -S $INSTALL
+		set +e
+	}
+
+# Update
+$YAOURT --noconfirm -Syua
+
+# System configuration
+$SUDO sh -c 'echo "en_US.UTF-8 UTF-8" > /etc/locale.gen' && sudo sh -c 'echo "fr_FR.UTF-8 UTF-8" >>/etc/locale.gen'
+$SUDO locale-gen
+$SUDO timedatectl set-timezone Europe/Paris
+$SUDO timedatectl set-ntp true
+
+# Remove unused package
+REMOVE="dmenu-manjaro manjaro-i3-settings morc_menu"
+$YAOURT --noconfirm -R $REMOVE
+
+# Install some desktop tools
+INSTALL="$INSTALL xorg-server xorg-apps xorg-xinit arandr i3lock-fancy-dualmonitors-git xtrlock xautolock xdo numlockx light xbindkeys compton"
+INSTALL="$INSTALL imlib2 nomacs w3m unclutter networkmanager-dmenu-git rofi spacefm dunst dunstify clipit"
+
+# Terminal tools
+INSTALL="$INSTALL up xterm rxvt-unicode termite git tig diff-so-fancy"
+
+# Development tools
+INSTALL="$INSTALL visual-studio-code-bin smartgit"
+
+# Video
+INSTALL="$INSTALL ffmpeg mpv"
+
+# Audio tools
+INSTALL="$INSTALL pulseaudio pavucontrol pulseaudio-ctl lmms protracker milkytracker xmp audacious audacity"
+
+# Graphical tools
+INSTALL="$INSTALL imagemagick maim gifsicle-lossy  screenkey"
+
+# System tools
+INSTALL="lm_sensors"
+
+#INSTALL="$INSTALL i3-gaps dmenu-manjaro rootmenu polybar-git"
+INSTALL="$INSTALL i3-gaps dmenu polybar-git"
+INSTALL="$INSTALL nerd-fonts-terminus ttf-material-design-icons google-chrome"
+
+# Install some terminal package
+INSTALL="$INSTALL openssh ranger neovim stow ripgrep ctags the_silver_searcher tty-clock mpd ncmpcpp libmpdclient dmidecode"
+
+# Python
+INSTALL="$INSTALL python-pip python-neovim python-virtualenvwrapper python-pywal termpalette-git"
+INSTALL="$INSTALL npm"
+
+# Install needed packages step 1
+install_needed_packages
+
+# For Vim package
+sudo npm i -g npm@5.6.0 # Fix temporary npm
+sudo pip install jedi pylint vim-vint
+sudo npm install -g fixjson jsonlint
+
+# Configure ZSH
+INSTALL="fzf fd antigen-git thefuck"
+
+# powerline
+INSTALL="$INSTALL neofetch highlight"
+INSTALL="$INSTALL shfmt"
+
+# Install needed packages step 2
+install_needed_packages
+
+# Download some wallpapers, you can donwload more with download_wallpaper scripts
+if [ "$ROOTUSER" == "y" ]; then
+	IMGPATH="/etc/skel"
+	SUDO="sudo"
+	sudo mkdir -p $IMGPATH/Images
+else
+	IMGPATH="$HOME"
+	SUDO=""
+	mkdir -p $IMGPATH/Images
+fi
+
+# Download some images (not all)
+$SUDO mkdir -p $IMGPATH/Images
+$SUDO convert "https://static.pexels.com/photos/540518/pexels-photo-540518.jpeg" -strip -resize "1920x1080^" "$IMGPATH/Images/mountain.jpg"
+$SUDO convert "http://www.tokkoro.com/picsup/427348-anonymous-hd-widescreen-wallpapers-backgrounds.jpeg" -strip -resize "1920x1080^" "$IMGPATH/Images/anonymous1_tokkoro.jpg"
+$SUDO convert "http://www.tokkoro.com/picsup/2986141-anonymous-face-mask-minimalism-guy-fawkes-mask-hope-posters___mixed-wallpapers.jpg" -strip -resize "1920x1080^" "$IMGPATH/Images/wanonymous2_tokkoro.jpg"
+$SUDO convert "https://static.pexels.com/photos/51123/apple-education-school-knowledge-51123.jpeg" -strip -resize "1920x1080^" "$IMGPATH/Images/apple1_pexels.jpg"
+
+$SUDO cp "$IMGPATH/Images/mountain.jpg" "$IMGPATH/wallpaper.jpg"
