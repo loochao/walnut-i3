@@ -38,7 +38,9 @@ RUN cd /etc/skel && git clone $REPO
 USER user
 # RUN /etc/skel/walnut-i3/commons/user/.bin/install_bootstrap
 RUN /etc/skel/walnut-i3/commons/user/.bin/install_commons
+# RUN /etc/skel/walnut-i3/commons/user/.bin/sync_dots
 
+USER root
 RUN echo -e '#! /bin/zsh\n \
 exec dbus-launch i3 --shmlog-size=26214400 \n\
 ' > /usr/local/bin/lauchsys

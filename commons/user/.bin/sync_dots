@@ -1,0 +1,36 @@
+#!/bin/bash
+
+showmess() {
+	echo "################################################################################"
+	echo "# $1"
+	echo "################################################################################"
+}
+
+delete() {
+	[ -e "$1" ] && rm -f "$1"
+}
+
+# Remove commons conflicts files (with stow)
+delete ~/.Xresources
+delete ~/.config/clipit/clipitrc
+delete ~/.config/dunst/dunstrc
+delete ~/.config/nitrogen/bg-saved.cfg
+delete ~/.config/nitrogen/nitrogen.cfg
+delete ~/.config/ranger/rc.conf
+delete ~/.config/ranger/scope.sh
+delete ~/.i3/config
+delete ~/.xinitrc
+
+path=$(dirname $(realpath $0))
+
+. $path/get_computer_name
+
+# Commons configuration
+showmess "Apply commons configuration"
+$path/mystow apply commons
+
+# Computer configuration
+if [ -e $path/../../../$COMPUTER ]; then
+	showmess "Apply $COMPUTER configuration"
+	$path/mystow apply $COMPUTER
+fi
