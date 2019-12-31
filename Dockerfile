@@ -1,4 +1,5 @@
-FROM heichblatt/archlinux-yaourt
+FROM clu6/archlinux-yaourt
+# FROM heichblatt/archlinux-yaourt
 
 ARG REPO=https://github.com/loochao/walnut-i3.git 
 
@@ -19,13 +20,14 @@ RUN yaourt --noconfirm -Sua
 
 # System configuration
 USER root
-RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && echo "zh_CN.UTF-8 UTF-8" >> /etc/locale.gen
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen #&& echo "zh_CN.UTF-8 UTF-8" >> /etc/locale.gen
 RUN locale-gen
+# RUN pacman --noconfirm -Sy i3-wm
 
 # Install some graphical packages
 USER user
-RUN yaourt --noconfirm -S xorg-server xorg-apps xorg-xinit xterm pulseaudio pulseaudio-ctl \
-    && yaourt --noconfirm -S openssh zsh
+RUN yaourt --noconfirm -S xorg-server xorg-apps xorg-xinit xterm pulseaudio pulseaudio-ctl 
+RUN yaourt --noconfirm -S openssh zsh
 
 # Python
 # RUN yaourt --noconfirm -S python-pip python-virtualenvwrapper  \
@@ -36,7 +38,7 @@ USER root
 RUN cd /etc/skel && git clone $REPO 
 
 USER user
-# RUN /etc/skel/walnut-i3/commons/user/.bin/install_bootstrap
+RUN /etc/skel/walnut-i3/commons/user/.bin/install_bootstrap
 RUN /etc/skel/walnut-i3/commons/user/.bin/install_commons
 # RUN /etc/skel/walnut-i3/commons/user/.bin/sync_dots
 

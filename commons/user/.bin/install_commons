@@ -33,7 +33,7 @@ YAOURT="yaourt"
 $YAOURT --noconfirm -Syua
 
 # System configuration
-$SUDO sh -c 'echo "en_US.UTF-8 UTF-8" > /etc/locale.gen' && sudo sh -c 'echo "fr_FR.UTF-8 UTF-8" >>/etc/locale.gen'
+$SUDO sh -c 'echo "en_US.UTF-8 UTF-8" > /etc/locale.gen' && sudo sh -c 'echo "zh_CN.UTF-8 UTF-8" >>/etc/locale.gen'
 $SUDO locale-gen
 $SUDO timedatectl set-timezone Ameria/New_York
 $SUDO timedatectl set-ntp true
