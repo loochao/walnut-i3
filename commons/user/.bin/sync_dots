@@ -30,7 +30,6 @@ showmess "Apply commons configuration"
 $path/mystow apply commons
 
 # Computer configuration
-exit(0)
 if [ -e $path/../../../$COMPUTER ]; then
 	showmess "Apply $COMPUTER configuration"
 	$path/mystow apply $COMPUTER
