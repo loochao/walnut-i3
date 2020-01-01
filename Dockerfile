@@ -22,7 +22,6 @@ RUN yaourt --noconfirm -Sua
 USER root
 RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen #&& echo "zh_CN.UTF-8 UTF-8" >> /etc/locale.gen
 RUN locale-gen
-# RUN pacman --noconfirm -Sy i3-wm
 
 # Install some graphical packages
 USER user
@@ -35,13 +34,15 @@ RUN yaourt --noconfirm -S openssh zsh
 
 USER root
 # Clone user dotfiles
+RUN echo 'REDO'
 RUN cd /etc/skel && git clone $REPO 
 
 USER user
 RUN /etc/skel/walnut-i3/commons/user/.bin/install_bootstrap
 RUN /etc/skel/walnut-i3/commons/user/.bin/install_commons
-# RUN /etc/skel/walnut-i3/commons/user/.bin/sync_dots
+RUN /etc/skel/walnut-i3/commons/user/.bin/sync_dots
 
+RUN pacman --noconfirm -Sy vim
 USER root
 RUN echo -e '#! /bin/zsh\n \
 exec dbus-launch i3 --shmlog-size=26214400 \n\
